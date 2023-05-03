@@ -30,8 +30,8 @@ void do_panic(void);
 void do_tabbing(uint16_t kc);
 void release_locks(void);
 
-void tap_dance_tap_hold_finished(qk_tap_dance_state_t *state, void *user_data);
-void tap_dance_tap_hold_reset(qk_tap_dance_state_t *state, void *user_data);
+void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data);
+void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data);
 
 enum layer_names {
 	L_BASE,
@@ -101,7 +101,7 @@ bool lock_highlight = false;
 bool lock_interrupt = false;
 lock_type_t lock_type = LOCK_NONE;
 
-qk_tap_dance_action_t tap_dance_actions[] = {
+tap_dance_action_t tap_dance_actions[] = {
 	[D_PANIC] = TAP_DANCE_TAP_ACTIONS(M_PANIC, 0, NULL, NULL),
 	[D_TAB] = TAP_DANCE_TAP_ACTIONS(DV_TAB, 0, &symbols_on, &symbols_off),
 	[D_SPACE] = TAP_DANCE_TAP_ACTIONS(DV_SPC, 0, &symbols_on, &symbols_off),
@@ -206,7 +206,7 @@ void keyboard_post_init_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	bool pressed = record->event.pressed;
-	qk_tap_dance_action_t *action;
+	tap_dance_action_t *action;
 
 	// Check keycodes during tabbing or command lock.
 	if (lock_type == LOCK_TABBING) {
@@ -310,7 +310,7 @@ void matrix_scan_user(void) {
 	}
 }
 
-void tap_dance_tap_hold_finished(qk_tap_dance_state_t *state, void *user_data) {
+void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
 	tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
 
 	if (state->pressed) {
@@ -336,7 +336,7 @@ void tap_dance_tap_hold_finished(qk_tap_dance_state_t *state, void *user_data) {
 	}
 }
 
-void tap_dance_tap_hold_reset(qk_tap_dance_state_t *state, void *user_data) {
+void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 	tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
 
 	if (tap_hold->state != NONE) {
