@@ -8,7 +8,6 @@
 
 // Can probably get rid of most of these because they are DVORAK mods
 
-#define DV_DELR KC_DEL
 #define DV_LSFT KC_LSFT
 #define DV_LCTL KC_LCTL
 #define DV_LOPT KC_LOPT
@@ -108,10 +107,10 @@ tap_dance_action_t tap_dance_actions[] = {
 	[D_SPACE] = TAP_DANCE_TAP_ACTIONS(KC_SPC, 0, &symbols_on, &symbols_off),
 	[D_RETURN] = TAP_DANCE_TAP_ACTIONS(KC_ENT, 0, &nav_on, &nav_off),
 	[D_SYSTEM] = TAP_DANCE_TAP_ACTIONS(M_PANIC, 0, &sys_on, &sys_off),
-	[D_TILD] = TAP_DANCE_TAP_ACTIONS(DV_TILD, DV_LSFT, NULL, NULL),
-	[D_PIPE] = TAP_DANCE_TAP_ACTIONS(DV_PIPE, DV_LCTL, NULL, NULL),
-	[D_LPRN] = TAP_DANCE_TAP_ACTIONS(DV_LPRN, DV_LOPT, NULL, NULL),
-	[D_RPRN] = TAP_DANCE_TAP_ACTIONS(DV_RPRN, DV_LCMD, NULL, NULL)
+	[D_TILD] = TAP_DANCE_TAP_ACTIONS(KC_TILD, KC_LSFT, NULL, NULL),
+	[D_PIPE] = TAP_DANCE_TAP_ACTIONS(KC_PIPE, KC_LCTL, NULL, NULL),
+	[D_LPRN] = TAP_DANCE_TAP_ACTIONS(KC_LPRN, KC_LOPT, NULL, NULL),
+	[D_RPRN] = TAP_DANCE_TAP_ACTIONS(KC_RPRN, KC_LCMD, NULL, NULL)
 };
 
 #define THL_3 TD(D_PANIC)
@@ -143,12 +142,12 @@ tap_dance_action_t tap_dance_actions[] = {
 #define MT_6 MT(MOD_RCTL, DV_6)
 #define MT_QUOT MT(MOD_RSFT, KC_QUOT)
 
-#define CTL_A LCTL(DV_A)
-#define CTL_E LCTL(DV_E)
+#define CTL_A LCTL(KC_A)
+#define CTL_E LCTL(KC_E)
 #define DK_APPS LCMD(LOPT(KC_ESC))
-#define DK_LOCK LCMD(LCTL(DV_Q))
-#define DK_TABL LCMD(LSFT(DV_LBRC))
-#define DK_TABR LCMD(LSFT(DV_RBRC))
+#define DK_LOCK LCMD(LCTL(KC_Q))
+#define DK_TABL LCMD(LSFT(KC_LBRC))
+#define DK_TABR LCMD(LSFT(KC_RBRC))
 
 // Alternative to tap dance
 #define SFT_ESC LSFT_T(KC_ESC)
