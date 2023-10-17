@@ -7,24 +7,20 @@
 #define LED GP25
 
 // Can probably get rid of most of these because they are DVORAK mods
-#define DV_SPC KC_SPC
-#define DV_TAB KC_TAB
-#define DV_ESC KC_ESC
-#define DV_RET KC_ENT
-#define DV_DELL KC_BSPC
+
 #define DV_DELR KC_DEL
 #define DV_LSFT KC_LSFT
 #define DV_LCTL KC_LCTL
 #define DV_LOPT KC_LOPT
 #define DV_LCMD KC_LCMD
-#define DV_RCMD KC_RCMD
-#define DV_ROPT KC_ROPT
-#define DV_RCTL KC_RCTL
-#define DV_RSFT KC_RSFT
+
 #define MOD_LOPT MOD_LALT
 #define MOD_LCMD MOD_LGUI
 #define MOD_ROPT MOD_RALT
 #define MOD_RCMD MOD_RGUI
+
+
+
 
 uint16_t lock_timeout(void);
 void do_panic(void);
@@ -38,7 +34,8 @@ enum layer_names {
 	L_BASE,
 	L_SYMBOLS,
 	L_NAV,
-	L_SYSTEM
+	L_SYSTEM, 
+	L_NUMBERS
 };
 
 void symbols_on(void);
@@ -47,12 +44,15 @@ void nav_on(void);
 void nav_off(void);
 void sys_on(void);
 void sys_off(void);
+void numbers_on(void);
+void numbers_off(void);
 
 typedef enum  {
 	LOCK_NONE,
 	LOCK_SYMBOLS,
 	LOCK_NAV,
-	LOCK_TABBING
+	LOCK_TABBING,
+	LOCK_NUMBERS
 } lock_type_t;
 
 typedef enum {
@@ -104,7 +104,7 @@ lock_type_t lock_type = LOCK_NONE;
 
 tap_dance_action_t tap_dance_actions[] = {
 	[D_PANIC] = TAP_DANCE_TAP_ACTIONS(M_PANIC, KC_LCTL, NULL, NULL),
-	[D_TAB] = TAP_DANCE_TAP_ACTIONS(DV_TAB, 0, &symbols_on, &symbols_off),
+	[D_TAB] = TAP_DANCE_TAP_ACTIONS(KC_TAB, 0, &numbers_on, &numbers_off),
 	[D_SPACE] = TAP_DANCE_TAP_ACTIONS(KC_SPC, 0, &symbols_on, &symbols_off),
 	[D_RETURN] = TAP_DANCE_TAP_ACTIONS(KC_ENT, 0, &nav_on, &nav_off),
 	[D_SYSTEM] = TAP_DANCE_TAP_ACTIONS(M_PANIC, 0, &sys_on, &sys_off),
@@ -115,6 +115,7 @@ tap_dance_action_t tap_dance_actions[] = {
 };
 
 #define THL_3 TD(D_PANIC)
+
 #define THL_2 TD(D_TAB)
 #define THL_1 KC_LGUI
 #define THR_1 TD(D_SPACE)
@@ -129,25 +130,29 @@ tap_dance_action_t tap_dance_actions[] = {
 
 #define MT_A MT(MOD_LSFT, KC_A)
 #define MT_S MT(MOD_LCTL, KC_S)
-#define MT_D MT(MOD_LOPT, KC_E)
+#define MT_D MT(MOD_LOPT, KC_D)
 #define MT_F MT(MOD_LCMD, KC_F)
 
 #define MT_J MT(MOD_RCMD, KC_J)
 #define MT_K MT(MOD_ROPT, KC_K)
 #define MT_L MT(MOD_RCTL, KC_L)
-#define MT_SLSH MT(MOD_RSFT, KC_SLSH)
+#define MT_SCLN MT(MOD_RSFT, KC_SCLN)
 
 #define MT_4 MT(MOD_RCMD, DV_4)
 #define MT_5 MT(MOD_ROPT, DV_5)
 #define MT_6 MT(MOD_RCTL, DV_6)
-#define MT_DOT MT(MOD_RSFT, DV_DOT)
+#define MT_QUOT MT(MOD_RSFT, KC_QUOT)
 
 #define CTL_A LCTL(DV_A)
 #define CTL_E LCTL(DV_E)
-#define DK_APPS LCMD(LOPT(DV_ESC))
+#define DK_APPS LCMD(LOPT(KC_ESC))
 #define DK_LOCK LCMD(LCTL(DV_Q))
 #define DK_TABL LCMD(LSFT(DV_LBRC))
 #define DK_TABR LCMD(LSFT(DV_RBRC))
+
+// Alternative to tap dance
+#define SFT_ESC LSFT_T(KC_ESC)
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	/*
@@ -164,27 +169,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	 */
 	[L_BASE] = LAYOUT_ortho_4x10(
 		KC_Q, 	KC_W, 	KC_E, 	KC_R,	KC_T,	KC_Y,	KC_U,   KC_I,    KC_O,    KC_P,
-		MT_A,   MT_S,   MT_D,   MT_F,   KC_G,   KC_H,   MT_J,   MT_K,    MT_L,    MT_SCLN,
+		KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,    KC_L,    KC_SCLN,
 		KC_Z, 	KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM, KC_DOT,  KC_SLSH,
-		KC_ESC, XXXXXXX,THL_3,  THL_2,  THL_1,  THR_1,  THR_2,  THR_3,   XXXXXXX, TD_SYS
+		SFT_ESC, XXXXXXX,THL_3,  THL_2,  THL_1,  THR_1,  THR_2,  THR_3,   XXXXXXX, TD_SYS
 	),
 	/*
 	 * Layer: Symbols
 	 */
 	[L_SYMBOLS] = LAYOUT_ortho_4x10(
-			DV_GRV,  _______, DV_LCBR, DV_RCBR, DV_BSLS, DV_PLUS, DV_7,    DV_8,    DV_9,    DV_MINS,
-			TD_TILD, TD_PIPE, TD_LPRN, TD_RPRN, DV_SLSH, DV_EQL,  MT_4,    MT_5,    MT_6,    MT_DOT,
-			DV_COLN, DV_SCLN, DV_LBRC, DV_RBRC, DV_UNDS, DV_0,    DV_1,    DV_2,    DV_3,    DV_SLSH,
+		KC_GRV,  KC_QUOT, KC_LCBR, KC_RCBR, KC_BSLS, KC_PLUS, KC_7,    KC_8,    KC_9,    KC_MINS,
+		KC_TILD, KC_PIPE, KC_LPRN, KC_RPRN, KC_SLSH, KC_EQL,  KC_4,    KC_5,    KC_6,    KC_QUOT,
+		KC_COLN, KC_SCLN, KC_LBRC, KC_RBRC, KC_UNDS, KCqq
+
+		_0,    KC_1,    KC_2,    KC_3,    KC_SLSH,
 			_______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 	),
 	/*
 	 * Layer: Navigation
 	 */
+	
 	[L_NAV] = LAYOUT_ortho_4x10(
-		DK_APPS, DK_LOCK, M_WINL,  M_WINR,  XXXXXXX, KC_VOLU, KC_HOME, KC_UP,   KC_END,  KC_PGUP,
-		CTL_A,   CTL_E,   DK_TABL, DK_TABR, XXXXXXX, KC_VOLD, KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDN,
-		XXXXXXX, XXXXXXX, M_APPL,  M_APPR,  XXXXXXX, KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX,
+		HYPR(KC_Q), HYPR(KC_W), HYPR(KC_E),  HYPR(KC_R),  HYPR(KC_T), KC_VOLU, KC_HOME, KC_UP,   KC_END,  KC_PGUP,
+		HYPR(KC_A), HYPR(KC_S),   HYPR(KC_D), HYPR(KC_F), HYPR(KC_G), KC_VOLD, KC_LEFT, KC_DOWN, KC_RGHT, KC_PGDN,
+		HYPR(KC_Z), HYPR(KC_X),   HYPR(KC_C), HYPR(KC_V), HYPR(KC_B), KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX,
 		_______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+	),
+	/*
+	 * Layer: Numbers
+	 */
+	[L_NUMBERS] = LAYOUT_ortho_4x10(
+		KC_1, 		KC_2, 	KC_3,  	KC_4,  	KC_5, 	KC_6, 	KC_7, 	KC_8,    KC_9,    KC_0,
+		KC_EXLM, 	KC_AT,  KC_HASH,KC_DLR, KC_PERC, KC_CIRC, KC_AMPR,    KC_ASTR,    KC_LPRN, KC_RPRN,
+		QK_BOOT, XXXXXXX,   LALT(KC_3), M_APPL,  M_APPR,  KC_MUTE, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT,
+		_______, _______, _______ , _______, _______, _______, _______, _______,_______, _______
 	),
 	/*
 	 * Layer: System
@@ -192,8 +209,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[L_SYSTEM] = LAYOUT_ortho_4x10(
 		KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,
 		KC_F11,  KC_F12,  KC_F13,  KC_F14,  KC_F15,  KC_F16,  KC_F17,  KC_F18,  KC_F19,  KC_F20,
-		DV_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, DV_RSFT,
-		DV_ESC,  XXXXXXX, DV_LCTL, DV_LOPT, DV_LCMD, DV_RCMD, DV_ROPT, DV_RCTL, XXXXXXX, M_PANIC
+		DV_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RSFT,
+		KC_ESC,  XXXXXXX, DV_LCTL, DV_LOPT, DV_LCMD, KC_RCMD, KC_ROPT, KC_RCTL, XXXXXXX, M_PANIC
 	)
 };
 
@@ -219,7 +236,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 		case M_APPR:
 		case DV_Q:
 		case DV_LSFT:
-		case DV_RSFT:
+		case KC_RSFT:
 			break;
 		// End tabbing for all other cases.
 		default:
@@ -242,10 +259,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 		do_panic();
 		break;
 	case M_APPL:
-		if (pressed) { do_tabbing(LSFT(DV_TAB)); }
+		if (pressed) { do_tabbing(LSFT(KC_TAB)); }
 		break;
 	case M_APPR:
-		if (pressed) { do_tabbing(DV_TAB); }
+		if (pressed) { do_tabbing(KC_TAB); }
 		break;
 	case M_WINL:
 		if (pressed) { do_tabbing(LSFT(DV_GRV)); }
@@ -373,6 +390,13 @@ void sys_on(void) {
 }
 void sys_off(void) { layer_off(L_SYSTEM); }
 
+void numbers_on(void) {
+	if (lock_type == LOCK_NUMBERS) { return; }
+	layer_on(L_NUMBERS);
+}
+void numbers_off(void) { layer_off(L_NUMBERS); }
+
+
 void do_tabbing(uint16_t kc) {
 	lock_timer = timer_read();
 	if (!(get_mods() & MOD_BIT(DV_LCMD))) {
@@ -411,6 +435,9 @@ void release_locks(void) {
 	case LOCK_NAV:
 		dprint("Releasing nav lock.");
 		layer_off(L_NAV);
+	case LOCK_NUMBERS:
+		dprint("Releasing number lock.");
+		layer_off(L_NUMBERS);
 	}
 	lock_type = LOCK_NONE;
 	lock_highlight = false;
