@@ -178,9 +178,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[L_SYMBOLS] = LAYOUT_ortho_4x10(
 		KC_GRV,  KC_QUOT, KC_LCBR, KC_RCBR, KC_BSLS, KC_PLUS, KC_7,    KC_8,    KC_9,    KC_MINS,
 		KC_TILD, KC_PIPE, KC_LPRN, KC_RPRN, KC_SLSH, KC_EQL,  KC_4,    KC_5,    KC_6,    KC_QUOT,
-		KC_COLN, KC_SCLN, KC_LBRC, KC_RBRC, KC_UNDS, KCqq
-
-		_0,    KC_1,    KC_2,    KC_3,    KC_SLSH,
+		KC_COLN, KC_SCLN, KC_LBRC, KC_RBRC, KC_UNDS, KC_0,    KC_1,    KC_2,    KC_3,    KC_SLSH,
 			_______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 	),
 	/*
@@ -371,29 +369,48 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 	}
 }
 
-void symbols_on(void) { layer_on(L_SYMBOLS); }
+void symbols_on(void) { 
+	tap_code16(KC_F19);
+	layer_on(L_SYMBOLS); 
+
+}
+
 void symbols_off(void) {
 	if (lock_type == LOCK_SYMBOLS) { return; }
+	tap_code16(KC_F17);
 	layer_off(L_SYMBOLS);
 }
 
-void nav_on(void) { layer_on(L_NAV); }
+void nav_on(void) { 
+	layer_on(L_NAV); 
+	tap_code16(KC_F18);
+}
+
 void nav_off(void) {
 	if (lock_type == LOCK_NAV) { return; }
+	tap_code16(KC_F17);
 	layer_off(L_NAV);
 }
 
 void sys_on(void) {
 	if (lock_type != LOCK_NONE) { return; }
+	tap_code16(KC_F14);	
 	layer_on(L_SYSTEM);
 }
-void sys_off(void) { layer_off(L_SYSTEM); }
+
+void sys_off(void) { 
+	tap_code16(KC_F17);
+	layer_off(L_SYSTEM); 
+}
 
 void numbers_on(void) {
 	if (lock_type == LOCK_NUMBERS) { return; }
+	tap_code16(KC_F16);
 	layer_on(L_NUMBERS);
 }
-void numbers_off(void) { layer_off(L_NUMBERS); }
+void numbers_off(void) { 
+	tap_code16(KC_F17);
+	layer_off(L_NUMBERS); }
 
 
 void do_tabbing(uint16_t kc) {
