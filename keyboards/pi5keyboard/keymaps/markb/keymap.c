@@ -1,5 +1,4 @@
 #include QMK_KEYBOARD_H
-#include "keymap_extras/keymap_dvorak.h"
 
 #define BLINK_TIMEOUT 250
 #define LOCK_TIMEOUT 5000
@@ -7,11 +6,6 @@
 #define LED GP25
 
 // Can probably get rid of most of these because they are DVORAK mods
-
-#define DV_LSFT KC_LSFT
-#define DV_LCTL KC_LCTL
-#define DV_LOPT KC_LOPT
-#define DV_LCMD KC_LCMD
 
 #define MOD_LOPT MOD_LALT
 #define MOD_LCMD MOD_LGUI
@@ -114,11 +108,11 @@ tap_dance_action_t tap_dance_actions[] = {
 };
 
 #define THL_3 TD(D_PANIC)
-
-#define THL_2 TD(D_TAB)
+#define THL_2 LT(L_NUMBERS, KC_TAB)
 #define THL_1 KC_LGUI
-#define THR_1 TD(D_SPACE)
-#define THR_2 TD(D_RETURN)
+
+#define THR_1 LT(L_SYMBOLS, KC_SPC)
+#define THR_2 LT(L_NAV, KC_ENT)
 #define THR_3 KC_BSPC
 
 #define TD_SYS TD(D_SYSTEM)
@@ -137,9 +131,9 @@ tap_dance_action_t tap_dance_actions[] = {
 #define MT_L MT(MOD_RCTL, KC_L)
 #define MT_SCLN MT(MOD_RSFT, KC_SCLN)
 
-#define MT_4 MT(MOD_RCMD, DV_4)
-#define MT_5 MT(MOD_ROPT, DV_5)
-#define MT_6 MT(MOD_RCTL, DV_6)
+#define MT_4 MT(MOD_RCMD, KC_4)
+#define MT_5 MT(MOD_ROPT, KC_5)
+#define MT_6 MT(MOD_RCTL, KC_6)
 #define MT_QUOT MT(MOD_RSFT, KC_QUOT)
 
 #define CTL_A LCTL(KC_A)
@@ -195,9 +189,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	 * Layer: Numbers
 	 */
 	[L_NUMBERS] = LAYOUT_ortho_4x10(
-		KC_1, 		KC_2, 	KC_3,  	KC_4,  	KC_5, 	KC_6, 	KC_7, 	KC_8,    KC_9,    KC_0,
-		KC_EXLM, 	KC_AT,  KC_HASH,KC_DLR, KC_PERC, KC_CIRC, KC_AMPR,    KC_ASTR,    KC_LPRN, KC_RPRN,
-		QK_BOOT, XXXXXXX,   LALT(KC_3), M_APPL,  M_APPR,  KC_MUTE, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT,
+		KC_1, 		KC_2, 		KC_3,  		KC_4,  		KC_5, 	KC_6, 	KC_7, 	KC_8,    KC_9,    KC_0,
+		KC_EXLM, 	KC_AT,  	KC_HASH,	KC_DLR, 	KC_PERC, KC_CIRC, KC_AMPR,    KC_ASTR,    KC_LPRN, KC_RPRN,
+		QK_BOOT, 	XXXXXXX,   	LALT(KC_3), M_APPL,  	M_APPR,  KC_MUTE, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT,
 		_______, _______, _______ , _______, _______, _______, _______, _______,_______, _______
 	),
 	/*
@@ -206,8 +200,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[L_SYSTEM] = LAYOUT_ortho_4x10(
 		KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,
 		KC_F11,  KC_F12,  KC_F13,  KC_F14,  KC_F15,  KC_F16,  KC_F17,  KC_F18,  KC_F19,  KC_F20,
-		DV_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RSFT,
-		KC_ESC,  XXXXXXX, DV_LCTL, DV_LOPT, DV_LCMD, KC_RCMD, KC_ROPT, KC_RCTL, XXXXXXX, M_PANIC
+		KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_RSFT,
+		KC_ESC,  XXXXXXX, KC_LCTL, KC_LOPT, KC_LCMD, KC_RCMD, KC_ROPT, KC_RCTL, XXXXXXX, M_PANIC
 	)
 };
 
@@ -231,8 +225,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 		case M_WINR:
 		case M_APPL:
 		case M_APPR:
-		case DV_Q:
-		case DV_LSFT:
+		case KC_Q:
+		case KC_LSFT:
 		case KC_RSFT:
 			break;
 		// End tabbing for all other cases.
@@ -262,10 +256,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 		if (pressed) { do_tabbing(KC_TAB); }
 		break;
 	case M_WINL:
-		if (pressed) { do_tabbing(LSFT(DV_GRV)); }
+		if (pressed) { do_tabbing(LSFT(KC_GRV)); }
 		break;
 	case M_WINR:
-		if (pressed) { do_tabbing(DV_GRV); }
+		if (pressed) { do_tabbing(KC_GRV); }
 		break;
 	case TD(D_SPACE):
 	case TD(D_TAB):
@@ -370,56 +364,48 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 }
 
 void symbols_on(void) { 
-	tap_code16(KC_F19);
 	layer_on(L_SYMBOLS); 
 
 }
 
 void symbols_off(void) {
 	if (lock_type == LOCK_SYMBOLS) { return; }
-	tap_code16(KC_F17);
 	layer_off(L_SYMBOLS);
 }
 
 void nav_on(void) { 
 	layer_on(L_NAV); 
-	tap_code16(KC_F18);
 }
 
 void nav_off(void) {
 	if (lock_type == LOCK_NAV) { return; }
-	tap_code16(KC_F17);
 	layer_off(L_NAV);
 }
 
 void sys_on(void) {
 	if (lock_type != LOCK_NONE) { return; }
-	tap_code16(KC_F14);	
 	layer_on(L_SYSTEM);
 }
 
 void sys_off(void) { 
-	tap_code16(KC_F17);
 	layer_off(L_SYSTEM); 
 }
 
 void numbers_on(void) {
 	if (lock_type == LOCK_NUMBERS) { return; }
-	tap_code16(KC_F16);
 	layer_on(L_NUMBERS);
 }
 void numbers_off(void) { 
-	tap_code16(KC_F17);
 	layer_off(L_NUMBERS); }
 
 
 void do_tabbing(uint16_t kc) {
 	lock_timer = timer_read();
-	if (!(get_mods() & MOD_BIT(DV_LCMD))) {
+	if (!(get_mods() & MOD_BIT(KC_LCMD))) {
 		dprint("Beginning tabbing.\n");
 		lock_type = LOCK_TABBING;
 		clear_mods();
-		register_code16(DV_LCMD);
+		register_code16(KC_LCMD);
 	}
 	dprint("Doing tabbing.\n");
 	tap_code16(kc);
@@ -444,7 +430,7 @@ void release_locks(void) {
 		break;
 	case LOCK_TABBING:
 		dprint("Releasing command lock.\n");
-		unregister_code16(DV_LCMD);
+		unregister_code16(KC_LCMD);
 	case LOCK_SYMBOLS:
 		dprint("Releasing symbol lock.");
 		layer_off(L_SYMBOLS);
