@@ -1,19 +1,26 @@
 #include QMK_KEYBOARD_H
+#include "quantum.h"
+#include "quantum/rgblight/rgblight.h"
+
+#define RGBLED_NUM 1
 
 #define BLINK_TIMEOUT 250
 #define LOCK_TIMEOUT 5000
 #define TABBING_TIMEOUT 1000
 #define LED GP25
 
-// Can probably get rid of most of these because they are DVORAK mods
-
 #define MOD_LOPT MOD_LALT
 #define MOD_LCMD MOD_LGUI
 #define MOD_ROPT MOD_RALT
 #define MOD_RCMD MOD_RGUI
 
-
-
+void keyboard_pre_init_user(void) {
+  // Set our LED pin as output
+  setPinOutput(24);
+  // Turn the LED off
+  // (Due to technical reasons, high is off and low is on)
+  writePinHigh(24);
+}
 
 uint16_t lock_timeout(void);
 void do_panic(void);
@@ -204,14 +211,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_ESC,  XXXXXXX, KC_LCTL, KC_LOPT, KC_LCMD, KC_RCMD, KC_ROPT, KC_RCTL, XXXXXXX, M_PANIC
 	)
 };
-
-void keyboard_post_init_user(void) {
-	//debug_enable = true;
-	//debug_matrix = true;
-	//debug_keyboard = true;
-	//debug_mouse = true;
-	setPinOutput(LED);
-}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	bool pressed = record->event.pressed;
@@ -454,4 +453,29 @@ void do_panic(void) {
 	clear_keyboard();
 	layer_clear();
 	layer_on(L_BASE);
+}
+
+void keyboard_post_init_user(void) {
+    // Initialize RGB to static black
+    rgblight_enable_noeeprom();
+    rgblight_sethsv_noeeprom(HSV_BLACK);
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+}
+
+void housekeeping_task_user(void) {
+    switch (get_highest_layer(layer_state | default_layer_state)) {
+        case 0:
+            // Default layer
+            rgblight_setrgb_at(RGB_BLACK, 0);
+            break;
+        case 1:
+            rgblight_setrgb_at(RGB_RED, 0);
+            break;
+        case 2:
+            rgblight_setrgb_at(RGB_GREEN, 0);
+            break;
+        case 3:
+            rgblight_setrgb_at(RGB_BLUE, 0);
+            break;
+    }
 }
