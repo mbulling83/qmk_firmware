@@ -20,6 +20,33 @@
 #pragma once
 
 #include "quantum.h"
+#include "adns5050.h"
+#include "analog.h"
+#include "opt_encoder.h"
+#include "pointing_device.h"
+
+// Sensor defs
+#define OPT_ENC1 F0
+#define OPT_ENC2 F4
+#define OPT_ENC1_MUX 0
+#define OPT_ENC2_MUX 4
+
+// Enables ploopy trackball firmware acceleration.
+extern bool PloopyAcceleration;
+
+// If set to 1, this causes the trackball to emit scroll events (instead of mouse events) when numlock is enabled.
+// This can be used to give the trackball nano a "scroll mode" and using your keyboard's NumLock to toggle it.
+extern bool PloopyNumlockScroll;
+
+// Determines the vertical scroll direction if PLOOPY_NUMLOCK_SCROLL is enabled.
+// A value of 1 means that moving the trackball UP will result in scrolling DOWN.
+// A value of -1 means that moving the trackball UP will result in scrolling UP.
+extern int16_t PloopyNumlockScrollVDir;
+
+void process_mouse(report_mouse_t* mouse_report);
+void process_mouse_user(report_mouse_t* mouse_report, int16_t x, int16_t y);
+
+#define LAYOUT(k00) {{ KC_NO }}
 
 typedef union {
   uint32_t raw;
@@ -31,7 +58,6 @@ typedef union {
 extern keyboard_config_t keyboard_config;
 
 enum ploopy_keycodes {
-    DPI_CONFIG = QK_KB_0,
+    DPI_CONFIG = SAFE_RANGE,
+    PLOOPY_SAFE_RANGE,
 };
-
-void cycle_dpi(void);
